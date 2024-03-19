@@ -1,0 +1,26 @@
+name: DockerBuildPush
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: BuildDockerimage
+      run: docker build -t "${{ secrets.DOCKERUSERNAME }}"/homework:latest .
+      
+    - name: Login
+      run: echo "${{ secrets.DOCKERTOKEN }}" | docker login -u "${{ secrets.DOCKERUSERNAME }}" --password-stdin
+      
+    - name: Push image
+      run: docker push "${{ secrets.DOCKERUSERNAME }}"/homework:latest
